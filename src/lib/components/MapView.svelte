@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
+  import { page } from '$app/stores';
   import type { Map as LeafletMap, LayerGroup, Marker, DivIcon } from 'leaflet';
 
   let mapContainer: HTMLDivElement;
@@ -26,6 +27,9 @@
   let currentZoom = $state(15);
   let routesVisible = $state(true);
   const ROUTE_ZOOM_THRESHOLD = 14;
+
+  // Intro popup state
+  let showIntro = $state(false);
 
   const METRO_MANILA_CENTER: [number, number] = [14.5547, 121.0244];
   const INITIAL_VIEW: [number, number] = [14.556610468041919, 121.02414579541572];
@@ -215,6 +219,13 @@
   });
 
   onMount(() => {
+    // Show intro popup on first visit
+    const hasSeenIntro = localStorage.getItem('manilakbay_intro_seen');
+    if (!hasSeenIntro) {
+      showIntro = true;
+      localStorage.setItem('manilakbay_intro_seen', 'true');
+    }
+
     if (typeof window !== 'undefined' && (window as any).L) {
       initMap((window as any).L);
       return;
@@ -293,6 +304,14 @@
       <span class="brand-name">Manilakbay</span>
       <span class="brand-tagline">Metro Manila Commute Guide</span>
     </div>
+    <a href="/about" class="about-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="16" x2="12" y2="12"></line>
+        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+      </svg>
+      <span>About</span>
+    </a>
   </header>
 
   <div class="controls-panel">
@@ -380,6 +399,41 @@
 
   <div class="contrib-hint">Right-click or long-press map to report a location</div>
 
+  <!-- Intro popup -->
+  {#if showIntro}
+    <div class="intro-overlay" onclick={() => showIntro = false} role="presentation"></div>
+    <div class="intro-popup">
+      <button class="intro-close" onclick={() => showIntro = false}>✕</button>
+      <div class="intro-icon">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="3 11 22 14 3 14 3 11"></polygon>
+          <path d="M11 19L3 11 11 3"></path>
+        </svg>
+      </div>
+      <h2 class="intro-title">Welcome to Manilakbay! 🚌</h2>
+      <p class="intro-text">
+        Your interactive commute guide for Metro Manila. Explore public transport routes, find tricycle terminals, bicycle parking, and check sidewalk conditions.
+      </p>
+      <div class="intro-tips">
+        <div class="intro-tip">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <span>Zoom in to zoom level 14+ to see routes</span>
+        </div>
+        <div class="intro-tip">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+          <span>Toggle layers using the menu on the left</span>
+        </div>
+        <div class="intro-tip">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          <span>Right-click or long-press to report locations</span>
+        </div>
+      </div>
+      <button class="intro-button" onclick={() => showIntro = false}>
+        Get Started
+      </button>
+    </div>
+  {/if}
+
   <!-- Contribution popup -->
   {#if showContribForm}
     <div class="contrib-overlay" onclick={() => showContribForm = false} role="presentation"></div>
@@ -427,7 +481,6 @@
           <div class="contrib-error">⚠️ {contribError}</div>
         {/if}
 
- <!-- || !contribName.trim() -->
         <button
           class="contrib-submit"
           onclick={submitContrib}
@@ -448,12 +501,39 @@
   .app-header {
     position: absolute; top: 0; left: 0; right: 0; z-index: 1000;
     background: linear-gradient(to bottom, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 100%);
-    padding: 14px 20px; pointer-events: none;
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
   }
-  .header-brand { display: flex; align-items: center; gap: 10px; color: #1a1a1a; }
+  .header-brand { display: flex; align-items: center; gap: 10px; color: #1a1a1a; pointer-events: none; }
   .header-brand :global(svg) { color: #F59E0B; }
   .brand-name { font-size: 1.2rem; font-weight: 700; letter-spacing: 0.04em; color: #1a1a1a; }
   .brand-tagline { font-size: 0.72rem; color: rgba(0,0,0,0.5); letter-spacing: 0.06em; text-transform: uppercase; }
+
+  .about-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: rgba(255,255,255,0.9);
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 8px;
+    color: #374151;
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.15s;
+    backdrop-filter: blur(8px);
+    pointer-events: auto;
+  }
+  .about-link:hover {
+    background: rgba(255,255,255,1);
+    border-color: rgba(0,0,0,0.2);
+  }
+  .about-link :global(svg) {
+    color: #F59E0B;
+  }
 
   .controls-panel {
     position: absolute; top: 60px; left: 16px; z-index: 1000;
@@ -517,6 +597,58 @@
     z-index: 1000; font-size: 0.68rem; color: rgba(0,0,0,0.38);
     pointer-events: none; white-space: nowrap;
   }
+
+  /* Intro popup */
+  .intro-overlay {
+    position: fixed; inset: 0; z-index: 2999;
+    background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
+  }
+  .intro-popup {
+    position: fixed; z-index: 3000;
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: min(380px, calc(100vw - 40px));
+    background: #fff; border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    padding: 32px 28px 28px;
+    text-align: center;
+  }
+  .intro-close {
+    position: absolute; top: 12px; right: 12px;
+    background: none; border: none; cursor: pointer;
+    font-size: 1.2rem; color: rgba(0,0,0,0.3);
+    padding: 4px 8px; border-radius: 6px;
+    transition: all 0.15s;
+  }
+  .intro-close:hover { background: rgba(0,0,0,0.05); color: rgba(0,0,0,0.6); }
+  .intro-icon { margin-bottom: 16px; }
+  .intro-title { 
+    font-size: 1.4rem; font-weight: 700; color: #1a1a1a;
+    margin: 0 0 12px 0;
+  }
+  .intro-text {
+    font-size: 0.9rem; color: #4B5563; line-height: 1.5;
+    margin: 0 0 24px 0;
+  }
+  .intro-tips {
+    display: flex; flex-direction: column; gap: 12px;
+    margin-bottom: 24px; text-align: left;
+    background: #F9FAFB; border-radius: 12px; padding: 16px;
+  }
+  .intro-tip {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 0.82rem; color: #374151;
+  }
+  .intro-tip :global(svg) {
+    color: #F59E0B; flex-shrink: 0;
+  }
+  .intro-button {
+    width: 100%; padding: 12px;
+    background: #F59E0B; color: #fff;
+    border: none; border-radius: 12px;
+    font-size: 0.95rem; font-weight: 700;
+    cursor: pointer; transition: background 0.15s;
+  }
+  .intro-button:hover { background: #D97706; }
 
   /* Contribution popup */
   .contrib-overlay {
