@@ -1,3 +1,4 @@
+
 {
   "parking": [
     {
@@ -21,6 +22,127 @@
       "fee": "₱10/hour",
       "operating_hours": "6:00 AM - 10:00 PM",
       "description": "Open-air bicycle rack near public market. Convenient for short stops."
-    }
+    },
+    {
+      "name": "Marquis Bike Rack",
+      "lat": 14.554048485014118,
+      "lng": 121.05472214465966,
+      "type": "Open Rack",
+      "capacity": 12,
+      "covered": false,
+      "fee": "Free",
+      "operating_hours": "6:00 AM - 10:00 PM",
+      "description": "Open-air bicycle rack near public market. Convenient for short stops."
+    },
+    {
+      "name": "EDSA Bike Hub - Southbound",
+      "lat": 14.542481252705997,
+      "lng": 121.01983085005538,
+      "type": "Open Rack",
+      "capacity": 10,
+      "covered": false,
+      "fee": "Free",
+      "operating_hours": "24/7",
+      "description": "Street-level bicycle parking near EDSA Southbound service road."
+    },
+    {
+      "name": "EDSA Bike Hub - Northbound",
+      "lat": 14.542222071304415,
+      "lng": 121.01998395460286,
+      "type": "Open Rack",
+      "capacity": 10,
+      "covered": false,
+      "fee": "Free",
+      "operating_hours": "24/7",
+      "description": "Street-level bicycle parking near EDSA Northbound service road."
+    },
+    {
+      "name": "Pasay Rotunda Bicycle Parking",
+      "lat": 14.55129025076709,
+      "lng": 121.02360169331847,
+      "type": "Open Rack",
+      "capacity": 15,
+      "covered": false,
+      "fee": "Free",
+      "operating_hours": "6:00 AM - 10:00 PM",
+      "description": "Parking area near the Pasay Rotunda, accessible from Taft Avenue."
+    },
+    {
+      "name": "Gil Puyat Station Bike Parking",
+      "lat": 14.552404731907805,
+      "lng": 121.02630529616503,
+      "type": "Covered Rack",
+      "capacity": 20,
+      "covered": true,
+      "fee": "Free",
+      "operating_hours": "5:00 AM - 11:00 PM",
+      "description": "Covered bicycle parking area near LRT-1 Gil Puyat Station."
+    },
+    {
+      "name": "Location 1",
+      "lat": 14.581758748168673,
+      "lng": 121.05427714164082,
+      "type": "Unknown",
+      "capacity": 0,
+      "covered": false,
+      "fee": "Unknown",
+      "operating_hours": "Unknown",
+      "description": ""
+    },
+    {
+      "name": "Location 2",
+      "lat": 14.584304461445843,
+      "lng": 121.05695506418029,
+      "type": "Unknown",
+      "capacity": 0,
+      "covered": false,
+      "fee": "Unknown",
+      "operating_hours": "Unknown",
+      "description": ""
+    },
+    {
+      "name": "Location 3",
+      "lat": 14.44317264070572,
+      "lng": 120.99799086179257,
+      "type": "Unknown",
+      "capacity": 0,
+      "covered": false,
+      "fee": "Unknown",
+      "operating_hours": "Unknown",
+      "description": ""
+    },
+    {
+      "name": "Location 4",
+      "lat": 14.444751841915686,
+      "lng": 120.99400072303864,
+      "type": "Unknown",
+      "capacity": 0,
+      "covered": false,
+      "fee": "Unknown",
+      "operating_hours": "Unknown",
+      "description": ""
+    },
+    {
+      "name": "Location 4",
+      "lat": 14.541853,
+      "lng": 121.018712,
+      "type": "Unknown",
+      "capacity": 0,
+      "covered": false,
+      "fee": "Unknown",
+      "operating_hours": "Unknown",
+      "description": ""
+    },
+    {
+      "name": "Location 4",
+      "lat": 14.541569,
+      "lng": 121.019242,
+      "type": "Unknown",
+      "capacity": 0,
+      "covered": false,
+      "fee": "Unknown",
+      "operating_hours": "Unknown",
+      "description": ""
+    }        
   ]
 }

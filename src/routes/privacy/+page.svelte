@@ -1,72 +1,6 @@
 <!-- src/routes/about/+page.svelte -->
-<script lang="ts">
-  import { onMount, onDestroy } from 'svelte';
-
-  const partners = [
-    {
-      name: 'Pantrypoints',
-      url: 'https://pantrypoints.com',
-      icon: '/pp.png'
-    },
-    {
-      name: 'Superphysics',
-      url: 'https://superphysics.org',
-      icon: '/sp.png'
-    },
-    {
-      name: 'Unlad Saka',
-      url: 'https://unladsaka.com',
-      icon: '/unlad.png'
-    },
-    {
-      name: 'Himalayan Asia',
-      url: 'https://www.facebook.com/Himalayanasia/',
-      icon: '/hima.png'
-    }
-  ];
-
-  // Duplicate partners for seamless scrolling
-  const tickerPartners = [...partners, ...partners, ...partners];
-
-  let isPaused = $state(false);
-  let tickerRef: HTMLDivElement;
-  let animationId: number;
-  let scrollPosition = 0;
-  const SCROLL_SPEED = 0.5;
-
-  function scrollTicker() {
-    if (!tickerRef) {
-      animationId = requestAnimationFrame(scrollTicker);
-      return;
-    }
-
-    if (!isPaused) {
-      scrollPosition += SCROLL_SPEED;
-      
-      const singleSetWidth = tickerRef.scrollWidth / 3;
-      if (scrollPosition >= singleSetWidth) {
-        scrollPosition = 0;
-      }
-      
-      tickerRef.style.transform = `translateX(-${scrollPosition}px)`;
-    }
-    
-    animationId = requestAnimationFrame(scrollTicker);
-  }
-
-  onMount(() => {
-    animationId = requestAnimationFrame(scrollTicker);
-  });
-
-  onDestroy(() => {
-    if (animationId) {
-      cancelAnimationFrame(animationId);
-    }
-  });
-</script>
-
 <svelte:head>
-  <title>About - Manilakbay</title>
+  <title>Privacy - Manilakbay</title>
 </svelte:head>
 
 <div class="page-wrapper">
@@ -80,15 +14,63 @@
       <div class="container">
         <div class="hero-content">
           <div class="hero-icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polygon points="3 11 22 14 3 14 3 11" />
-              <path d="M11 19L3 11 11 3" />
-            </svg>
+             <img src="/m.png" a="Manilakbay">
           </div>
-          <h1>About <span class="highlight">Manilakbay</span></h1>
-          <p class="hero-description">
-            Your interactive commute guide for Metro Manila. Explore public transport routes, find tricycle terminals, bicycle parking, and check sidewalk conditions — all on one map.
-          </p>
+          <h1>Privacy Policy for <span class="highlight">Manilakbay</span></h1>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mission Section -->
+    <section class="section">
+      <div class="container">
+        <div class="card">
+          <p>Last Updated: May 9, 2026</p>
+
+          <h3 class="text-2xl font-bold">1. Introduction</h3>
+
+          <p>Welcome to Manilakbay ("we," "our," or "us"). This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our Manilakbay mobile application (the "App"), a Metro Manila commute guide. By using the App, you agree to the collection and use of information in accordance with this policy.</p>
+
+
+          <h3 class="text-2xl font-bold">2. Information We Collect</h3>
+
+          <p>We collect only the following information via the user submission form:</p>
+
+          <ul>
+          <li>Latitude and Longitude information of spots designated by the user</li>
+          <li>Spot type as parking spot, tricycle terminal, sidewalk locaiton, and route path</li>
+          </ul>
+
+
+<!-- 
+### 2.2 Automatically Collected Information
+The App may collect certain information automatically, including:
+
+- **Device Information**: Device type, operating system version, unique device identifiers
+- **Usage Data**: App interaction data, features accessed, time spent on the app
+- **Error Logs**: Crash reports and performance data to improve app stability
+- **Map Tile Requests**: Anonymous requests to map tile servers (CartoCDN) to display map data
+ -->
+
+          <h3 class="mt-4 text-2xl font-bold">3. How We Use the Information You Provide</h3>
+
+          <p>We use the collected information to update the map with the information provided</p>
+
+          <h3 class="text-2xl font-bold">4. Data Storage and Security</h3>
+
+          <p>All transportation route data (jeepney, bus, UV express routes, tricycle terminals, bicycle parking, sidewalk segments) is stored locally on your device. No route data is transmitted to external servers except for map tile requests.</p>
+
+          <h3 class="text-2xl font-bold">5. Changes to This Privacy Policy</h3>
+
+          <p>We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last Updated" date. You are advised to review this Privacy Policy periodically for any changes.</p>
+
+          <h3 class="text-2xl font-bold">6. Contact Us</h3>
+
+          <p>If you have any questions about this Privacy Policy, please email pantrypoints@gmail.com</p>
+        </div>
+      </div>
+    </section>
+
           <div class="button-group">
             <a href="/" class="btn-primary">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -98,148 +80,7 @@
               Back to Map
             </a>
           </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- Mission Section -->
-    <section class="section">
-      <div class="container">
-        <div class="card">
-          <h2>Our Mission</h2>
-          <p>
-            Navigating Metro Manila can be challenging. With hundreds of jeepney routes, multiple bus lines, UV Express vans, and an ever-growing network of tricycle terminals and bicycle facilities, finding the best way to get around requires up-to-date, accessible information.
-          </p>
-          <p>
-            We believe that public transportation data should be free, open, and easy to use. Manilakbay brings together route information, terminal locations, and infrastructure data into one intuitive map, helping commuters, tourists, and urban planners make informed decisions.
-          </p>
-          <p>Read our <a href="/privacy">Privacy Policy</a></p>
-        </div>
-      </div>
-    </section>
-
-    <!-- How to Use Section -->
-    <section class="section">
-      <div class="container">
-        <div class="card">
-          <h2>How to Use the Map</h2>
-          <div class="steps">
-            <div class="step">
-              <span class="step-icon">🔍</span>
-              <div>
-                <h3>Zoom In to See Routes</h3>
-                <p>Routes become visible at zoom level 14 and above. Use the zoom controls (bottom-right) or scroll to explore different areas of Metro Manila.</p>
-              </div>
-            </div>
-            <div class="step">
-              <span class="step-icon">🎛️</span>
-              <div>
-                <h3>Toggle Layers</h3>
-                <p>Use the Layers panel on the left to show or hide different transport types: jeepneys, buses, UV Express, tricycles, bicycles, and sidewalks.</p>
-              </div>
-            </div>
-            <div class="step">
-              <span class="step-icon">💡</span>
-              <div>
-                <h3>Hover for Details</h3>
-                <p>Hover over routes and markers to see detailed information about each transport line, terminal, or facility.</p>
-              </div>
-            </div>
-            <div class="step">
-              <span class="step-icon">📍</span>
-              <div>
-                <h3>Contribute Data</h3>
-                <p>Right-click or long-press anywhere on the map to report new bicycle parking or tricycle terminal locations and help improve the map for everyone.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="section">
-      <div class="container">
-        <div class="features-grid">
-          <div class="feature-card">
-            <span class="feature-icon">🚌</span>
-            <h3>Transport Routes</h3>
-            <p>Jeepney, bus, and UV Express routes with detailed information</p>
-          </div>
-          <div class="feature-card">
-            <span class="feature-icon">🛺</span>
-            <h3>Tricycle Terminals</h3>
-            <p>Find tricycle terminals near you</p>
-          </div>
-          <div class="feature-card">
-            <span class="feature-icon">🚲</span>
-            <h3>Bicycle Parking</h3>
-            <p>Locate bicycle parking facilities</p>
-          </div>
-          <div class="feature-card">
-            <span class="feature-icon">🚶</span>
-            <h3>Sidewalk Conditions</h3>
-            <p>Check sidewalk widths and walkability</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Partners Section -->
-    <section class="section">
-      <div class="container">
-        <div class="card partners-card">
-          <h2 class="partners-title">Our Partners</h2>
-          <p class="partners-subtitle">Manilakbay is proud to collaborate with these organizations working to improve communities.</p>
-
-          <!-- Partner Ticker -->
-          <div class="ticker-wrapper">
-            <div 
-              class="ticker-container"
-              onmouseenter={() => isPaused = true}
-              onmouseleave={() => isPaused = false}
-            >
-              <div class="ticker-overlay-left"></div>
-              <div class="ticker-overlay-right"></div>
-
-              <div class="ticker-track" bind:this={tickerRef}>
-                {#each tickerPartners as partner, index}
-                  <a
-                    href={partner.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="partner-ticker-card"
-                  >
-                    <span class="partner-ticker-icon">{partner.icon}</span>
-                    <span class="partner-ticker-name">{partner.name}</span>
-                  </a>
-                {/each}
-              </div>
-            </div>
-            <p class="ticker-status">
-              {isPaused ? '🖐️ Paused — move mouse away to resume' : '🔄 Auto-scrolling — hover to pause'}
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Open Source Section -->
-    <section class="section">
-      <div class="container">
-        <div class="card opensource-card">
-          <h2>Open Source</h2>
-          <p>
-            Manilakbay is an open-source project. We believe in transparency and community collaboration. The map data and code are freely available for anyone to use, modify, and improve.
-          </p>
-          <div class="button-group" style="margin-top: 24px;">
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="btn-primary">
-              Contribute on GitHub →
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
 
     <!-- Footer -->
     <footer class="footer">
