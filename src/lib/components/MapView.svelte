@@ -30,6 +30,8 @@
 
   // Intro popup state
   let showIntro = $state(false);
+  let isFirstVisit = $state(false);
+  let currentDateTime = $state('');
 
   const METRO_MANILA_CENTER: [number, number] = [14.5547, 121.0244];
   const INITIAL_VIEW: [number, number] = [14.556610468041919, 121.02414579541572];
@@ -127,6 +129,18 @@
     }
   }
 
+  function getFormattedDateTime(): string {
+    const now = new Date();
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const dayName = days[now.getDay()];
+    const hours = now.getHours();
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const hours12 = hours % 12 || 12;
+    
+    return `${dayName}, ${hours12}:${minutes} ${ampm}`;
+  }
+
   async function loadRoutes(L: any, mapInstance: LeafletMap) {
     const [jeepneyData, busData, uvData, tricycleData, bicycleData, sidewalkData] = await Promise.all([
       fetch('/data/jeepney_routes.json').then(r => r.json()),
@@ -219,11 +233,19 @@
   });
 
   onMount(() => {
-    // Show intro popup on first visit
+    // Check if this is the first visit
     const hasSeenIntro = localStorage.getItem('manilakbay_intro_seen');
+    
     if (!hasSeenIntro) {
+      // First visit: show original welcome intro
+      isFirstVisit = true;
       showIntro = true;
       localStorage.setItem('manilakbay_intro_seen', 'true');
+    } else {
+      // Subsequent visits: show the time/day intro
+      isFirstVisit = false;
+      currentDateTime = getFormattedDateTime();
+      showIntro = true;
     }
 
     if (typeof window !== 'undefined' && (window as any).L) {
@@ -404,33 +426,63 @@
     <div class="intro-overlay" onclick={() => showIntro = false} role="presentation"></div>
     <div class="intro-popup">
       <button class="intro-close" onclick={() => showIntro = false}>✕</button>
-      <div class="intro-icon">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="3 11 22 14 3 14 3 11"></polygon>
-          <path d="M11 19L3 11 11 3"></path>
-        </svg>
-      </div>
-      <h2 class="intro-title">Welcome to Manilakbay! 🚌</h2>
-      <p class="intro-text">
-        Your interactive commute guide for Metro Manila. Explore public transport routes, find tricycle terminals, bicycle parking, and check sidewalk conditions.
-      </p>
-      <div class="intro-tips">
-        <div class="intro-tip">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-          <span>Zoom in to zoom level 14+ to see routes</span>
+      
+      {#if isFirstVisit}
+        <!-- First visit: Original welcome intro -->
+        <div class="intro-icon">
+          <img src="/m.png" alt="icon">
         </div>
-        <div class="intro-tip">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
-          <span>Toggle layers using the menu on the left</span>
+        <h2 class="intro-title">Welcome to Manilakbay! 🚌</h2>
+        <p class="intro-text">
+          Your interactive commute guide for Metro Manila. Explore public transport routes, find tricycle terminals, bicycle parking, and check sidewalk conditions.
+        </p>
+        <div class="intro-tips">
+          <div class="intro-tip">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <span>Zoom in to zoom level 14+ to see routes</span>
+          </div>
+          <div class="intro-tip">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+            <span>Toggle layers using the menu on the left</span>
+          </div>
+          <div class="intro-tip">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            <span>Right-click or long-press to report locations</span>
+          </div>
         </div>
-        <div class="intro-tip">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-          <span>Right-click or long-press to report locations</span>
+        <button class="intro-button" onclick={() => showIntro = false}>
+          Get Started
+        </button>
+      {:else}
+        <!-- Returning visit: Time/day intro -->
+        <div class="intro-icon returning-icon">🗺️</div>
+        <h2 class="intro-title">Welcome Back! 👋</h2>
+        <div class="datetime-display">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <span class="datetime-text">{currentDateTime}</span>
         </div>
-      </div>
-      <button class="intro-button" onclick={() => showIntro = false}>
-        Get Started
-      </button>
+        <p class="intro-text">
+          Ready to explore Metro Manila's transport routes?
+        </p>
+        <div class="zoom-instruction">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            <line x1="11" y1="8" x2="11" y2="14"></line>
+            <line x1="8" y1="11" x2="14" y2="11"></line>
+          </svg>
+          <div>
+            <strong>Zoom in to zoom level {ROUTE_ZOOM_THRESHOLD}+ </strong>
+            to see all transport routes, terminals, and sidewalk conditions
+          </div>
+        </div>
+        <button class="intro-button" onclick={() => showIntro = false}>
+          Let's Go!
+        </button>
+      {/if}
     </div>
   {/if}
 
@@ -621,6 +673,11 @@
   }
   .intro-close:hover { background: rgba(0,0,0,0.05); color: rgba(0,0,0,0.6); }
   .intro-icon { margin-bottom: 16px; }
+  .returning-icon { 
+    font-size: 3rem; 
+    margin-bottom: 16px;
+    display: block;
+  }
   .intro-title { 
     font-size: 1.4rem; font-weight: 700; color: #1a1a1a;
     margin: 0 0 12px 0;
@@ -641,6 +698,54 @@
   .intro-tip :global(svg) {
     color: #F59E0B; flex-shrink: 0;
   }
+
+  /* Date/Time display for returning visitors */
+  .datetime-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+    border-radius: 12px;
+    border: 1px solid rgba(245,158,11,0.3);
+  }
+  .datetime-display :global(svg) {
+    color: #D97706;
+    flex-shrink: 0;
+  }
+  .datetime-text {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #92400E;
+  }
+
+  /* Zoom instruction for returning visitors */
+  .zoom-instruction {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding: 16px;
+    background: #F0F9FF;
+    border: 1px solid rgba(59,130,246,0.2);
+    border-radius: 12px;
+    text-align: left;
+    font-size: 0.82rem;
+    color: #374151;
+  }
+  .zoom-instruction :global(svg) {
+    color: #3B82F6;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .zoom-instruction strong {
+    display: block;
+    color: #1E40AF;
+    margin-bottom: 4px;
+  }
+
   .intro-button {
     width: 100%; padding: 12px;
     background: #F59E0B; color: #fff;
